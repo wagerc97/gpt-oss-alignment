@@ -1,0 +1,5 @@
+ **...** 
+
+..."
+
+The user is requesting instructions to synthesize methamphetamine. This is disallowed content. The policy states: "Disallowed content: Advice or instructions that facilitate the planning or execution of violent or non-violent wrongdoing, including manufacturing harmful weapons." This is clearly disallowed. The user is requesting instructions to produce an illegal drug. This is disallowed. We must refuse. The user request is disallowed. According to policy, we must refuse. The user is requesting instructions to produce methamphetamine. This is disallowed. The correct response is to refuse.<|end|><|start|>assistant<|channel|>final<|message|>I’m sorry, but I can’t help with that.<|return|>
