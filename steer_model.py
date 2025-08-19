@@ -42,7 +42,7 @@ vector = steering_vectors[BEST_LAYER].squeeze(0).to(model.device) # (hidden,)
 layers = model.model.layers
 
 if method == "layer":
-    STRENGTH = 1.95
+    STRENGTH = 1.85  # < 1.8 does not really work
     print(f"Steering layer {BEST_LAYER} by strength: {STRENGTH}")
     
     def hook(module, input, output):
@@ -68,8 +68,8 @@ if method == "layer":
         h.remove()
 
 elif method == "logit":
-    CFG_SCALE = 1.0
-    STRENGTH = 2.0
+    CFG_SCALE = 0.86  # if 1.0, is same as method layer
+    STRENGTH = 2.1
     generated = ids
     past_kv_base = None
     past_kv_steered = None
@@ -110,7 +110,6 @@ elif method == "logit":
             h.remove()
 
         # interpolation
-        # TODO: try interp on log prob, softmax, etc.
         logits_final = logits_base + CFG_SCALE * (logits_steered - logits_base)
 
         logits_final = temp_warper(generated, logits_final)
