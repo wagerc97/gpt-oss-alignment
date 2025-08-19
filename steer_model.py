@@ -9,8 +9,8 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--method", type=str, default="layer", help="Choose between: layer, logit")
 parser.add_argument("--max_new_tokens", type=int, default=512)
-parser.add_argument("--temperature", type=float, default=0.6)
-parser.add_argument("--top_p", type=float, default=0.95)
+parser.add_argument("--temperature", type=float, default=1.0)
+parser.add_argument("--top_p", type=float, default=1.0)
 parser.add_argument("--mode", type=str, default="chat", help="Choose between: chat, completion")
 args = parser.parse_args()
 
@@ -42,7 +42,8 @@ vector = steering_vectors[BEST_LAYER].squeeze(0).to(model.device) # (hidden,)
 layers = model.model.layers
 
 if method == "layer":
-    STRENGTH = 1.5
+    STRENGTH = 1.95
+    print(f"Steering layer {BEST_LAYER} by strength: {STRENGTH}")
     
     def hook(module, input, output):
         hidden = output[0]
@@ -67,8 +68,8 @@ if method == "layer":
         h.remove()
 
 elif method == "logit":
-    CFG_SCALE = 0.7
-    STRENGTH = 2.5
+    CFG_SCALE = 1.0
+    STRENGTH = 2.0
     generated = ids
     past_kv_base = None
     past_kv_steered = None
