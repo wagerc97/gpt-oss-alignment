@@ -5,6 +5,7 @@ from transformers import (
 )
 from tqdm import tqdm
 import argparse
+import numpy as np
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--method", type=str, default="layer", help="Choose between: layer, logit")
@@ -12,6 +13,7 @@ parser.add_argument("--max_new_tokens", type=int, default=512)
 parser.add_argument("--temperature", type=float, default=1.0)
 parser.add_argument("--top_p", type=float, default=1.0)
 parser.add_argument("--mode", type=str, default="chat", help="Choose between: chat, completion")
+parser.add_argument("--decay", type=str, default="none", help="Choose between: none, linear, cosine")
 args = parser.parse_args()
 
 method = args.method
@@ -19,6 +21,7 @@ max_new_tokens = args.max_new_tokens
 temperature = args.temperature
 top_p = args.top_p
 mode = args.mode
+decay = args.decay
 
 model_id = "openai/gpt-oss-20b"
 
@@ -70,6 +73,9 @@ if method == "layer":
 elif method == "logit":
     CFG_SCALE = 0.86  # if 1.0, is same as method layer
     STRENGTH = 2.1
+    INITIAL_STRENGTH = STRENGTH if decay == "none" else STRENGTH * 2
+    FINAL_STRENGTH = STRENGTH if decay == "none" else STRENGTH / 2
+
     generated = ids
     past_kv_base = None
     past_kv_steered = None
@@ -78,6 +84,15 @@ elif method == "logit":
     top_p_warper = TopPLogitsWarper(top_p)
 
     for step in tqdm(range(max_new_tokens), desc="Generating response"):
+        progress = step / max(max_new_tokens, 1)
+        if decay == "none": # works best
+            current_strength = STRENGTH
+        elif decay == "linear":
+            current_strength = INITIAL_STRENGTH - (INITIAL_STRENGTH - FINAL_STRENGTH) * progress
+        elif decay == "cosine":
+            cosine_factor = (1 + np.cos(np.pi * progress)) / 2
+            current_strength = FINAL_STRENGTH + (INITIAL_STRENGTH - FINAL_STRENGTH) * cosine_factor
+        
         with torch.no_grad():
             output_base = model(
                 generated if step == 0 else generated[:, -1:],
@@ -90,9 +105,9 @@ elif method == "logit":
         def steering_hook(module, input, output): # register once for each forward pass
             hidden = output[0]
             if hidden.dim() == 2:
-                hidden[-1, :] += STRENGTH * vector
+                hidden[-1, :] += current_strength * vector
             elif hidden.dim() == 3:
-                hidden[:, -1, :] += STRENGTH *vector
+                hidden[:, -1, :] += current_strength *vector
             return output
 
         h = layers[BEST_LAYER - 1].register_forward_hook(steering_hook)
@@ -126,6 +141,6 @@ elif method == "logit":
     response = tokenizer.decode(generated[0], skip_special_tokens=False)
 
 print(f"Response: {response}")
-with open(f"activations/{model_id.split('/')[-1]}_steered_response_{mode}_{method}.txt", "w") as f:
+with open(f"activations/{model_id.split('/')[-1]}_steered_response_{mode}_method_{method}_decay_{decay}.txt", "w") as f:
     f.write(response)
 

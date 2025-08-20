@@ -36,9 +36,10 @@ This pipeline computes the mean difference between activation vectors of unalign
 I will make these scripts more production grade in the coming days.
 
 ```
+export CUDA_VISIBLE_DEVICES=[your device] # most stable on single device
 python find_vector.py
 python compute_vector_diff.py
-python steer_model.py --method "layer|logit"
+python steer_model.py --method "layer|logit" --decay "none|linear|cosine"
 ```
 
 Enjoy!
