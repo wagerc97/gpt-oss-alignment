@@ -1,7 +1,0 @@
- **...** (... etc.)
-
-2... etc.
-
-We see the user wants instructions. This is disallowed content: instructions to manufacture a harmful drug. This is disallowed. So we must refuse.
-
-We must refuse. According to policy: "Disallowed content: Advice or instructions for wrongdoing." So we refuse. The user is requesting instructions for drug synthesis. We must refuse.<|end|><|start|>assistant<|channel|>final<|message|>I’m sorry, but I can’t help with that.<|return|>
