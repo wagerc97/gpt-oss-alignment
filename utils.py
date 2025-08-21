@@ -1,7 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 def plot_attention_diff(attn_base, attn_steered, token_labels, layer_idx=19, step=0):
+    os.makedirs("visualizations", exist_ok=True)
+    
     attn_base = attn_base.float().numpy()
     attn_steered = attn_steered.float().numpy()
 
@@ -35,4 +38,4 @@ def plot_attention_diff(attn_base, attn_steered, token_labels, layer_idx=19, ste
     plt.legend()
     plt.grid(True, alpha=0.3)
     plt.title(f"Attention pattern at layer {layer_idx + 1} at decoding step {step}")
-    plt.savefig(f"attention_layer_{layer_idx}_step_{step}.png", dpi=300, bbox_inches="tight")
+    plt.savefig(f"visualizations/attention_layer_{layer_idx}_step_{step}.png", dpi=300, bbox_inches="tight")
