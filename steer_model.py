@@ -8,10 +8,10 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
-from utils import plot_attention_diff
+from utils import plot_attention_diff, plot_attention_heads
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--method", type=str, default="layer", help="Choose between: layer, logit")
+parser.add_argument("--method", type=str, default="logit", help="Choose between: layer, logit")
 # sampling params
 parser.add_argument("--max_new_tokens", type=int, default=512)
 parser.add_argument("--temperature", type=float, default=1.0)
@@ -21,7 +21,7 @@ parser.add_argument("--mode", type=str, default="chat", help="Choose between: ch
 parser.add_argument("--decay", type=str, default="none", help="Choose between: none, linear, cosine")
 # visualization params
 parser.add_argument("--layer", type=int, default=19)
-parser.add_argument("--visualize_step", type=int, default=0)
+parser.add_argument("--visualize_step", type=int, default=10)
 args = parser.parse_args()
 
 method = args.method
@@ -73,8 +73,40 @@ def capture_attn_hook(storage_list):
         storage_list.append(attn)
     return attn_hook
 
+def capture_attn_head_hook(past_kv, strength):
+    def hook(module, input, output):
+        steering_hidden = (vector * strength).unsqueeze(0).unsqueeze(0).to(torch.bfloat16)
+
+        q_steering = F.linear(steering_hidden, module.q_proj.weight, module.q_proj.bias)
+
+        layer_idx = BEST_LAYER
+        k_cached = past_kv[layer_idx][0]
+        v_cached = past_kv[layer_idx][1]
+
+        head_dim = module.head_dim
+        num_kv_heads = k_cached.shape[1]
+        num_heads = num_kv_heads * module.num_key_value_groups
+
+        q_steering = q_steering.view(1, 1, num_heads, head_dim).transpose(1, 2)
+
+        q_norm_per_head = q_steering.norm(dim=-1).squeeze()
+
+        mean_norm = q_norm_per_head.mean().item()
+        std_norm = q_norm_per_head.std().item()
+
+        cv = std_norm / mean_norm
+
+        print(f"Mean q-norm for steering vector: {mean_norm:.3f}, std: {std_norm:.3f}")
+        print(f"Coefficient of variation: {cv:.2f}")
+        for head in q_norm_per_head.argsort(descending=True)[:10]:
+            print(f"Head {head}: {q_norm_per_head[head]:.3f}")
+
+        plot_attention_heads(q_norm_per_head, mean_norm, std_norm, BEST_LAYER, visualize_step)
+        
+    return hook
+
 if method == "layer":
-    STRENGTH = 1.85  # < 1.8 does not really work
+    STRENGTH = 1.85
     print(f"Steering layer {BEST_LAYER} by strength: {STRENGTH}")
 
     h = layers[BEST_LAYER - 1].register_forward_hook(hook)
@@ -93,7 +125,7 @@ if method == "layer":
 
 elif method == "logit":
     CFG_SCALE = 0.86  # if 1.0, is same as method layer
-    STRENGTH = 2.1
+    STRENGTH = 2.0
     INITIAL_STRENGTH = STRENGTH if decay == "none" else STRENGTH * 2
     FINAL_STRENGTH = STRENGTH if decay == "none" else STRENGTH / 2
 
@@ -132,6 +164,10 @@ elif method == "logit":
         if step == visualize_step:
             attn_hook_base.remove()
             attn_hook_steered = layers[BEST_LAYER].self_attn.register_forward_hook(capture_attn_hook(attn_patterns_steered))
+            attn_head_hook = layers[BEST_LAYER].self_attn.register_forward_hook(capture_attn_head_hook(
+                past_kv_base,
+                STRENGTH
+            ))
 
         try:
             with torch.no_grad():
@@ -148,6 +184,7 @@ elif method == "logit":
 
         if step == visualize_step:
             attn_hook_steered.remove()
+            attn_head_hook.remove()
             attn_base = attn_patterns_base[0].mean(0) # avg over heads
             attn_steered = attn_patterns_steered[0].mean(0)
 

@@ -1,3 +1,4 @@
-activations/*
+*.pt
+*.txt
 __pycache__
 
