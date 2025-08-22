@@ -39,7 +39,11 @@ I will make these scripts more production grade in the coming days.
 export CUDA_VISIBLE_DEVICES=[your device] # most stable on single device
 python find_vector.py
 python compute_vector_diff.py
-python steer_model.py --method "layer|logit" --decay "none|linear|cosine"
+python steer_model.py \
+    --method "layer|logit" \
+    --decay "none|linear|cosine" \
+    --layer <attack_layer> \
+    --visualize_step <step_to_visualize_attention_scores> 
 ```
 
 Enjoy!
