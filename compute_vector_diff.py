@@ -20,6 +20,7 @@ neg_prompt_tensors = torch.stack(neg_prompt_tensors, dim=0)
 
 num_layers = pos_prompt_tensors.shape[1]
 
+# Compute the difference between the negative and positive prompt tensors to get the evil vector diff.
 prompt_diff = []
 for l in range(num_layers):
     pos_layer = pos_prompt_tensors[:, l, :, :]
@@ -28,7 +29,7 @@ for l in range(num_layers):
     pos_mean = pos_layer.mean(dim=0).float()
     neg_mean = neg_layer.mean(dim=0).float()
 
-    layer_diff = pos_mean - neg_mean
+    layer_diff = neg_mean - pos_mean
     prompt_diff.append(layer_diff)
 
 prompt_diff = torch.stack(prompt_diff, dim=0)
