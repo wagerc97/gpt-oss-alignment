@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 import os
 
 def plot_attention_diff(attn_base, attn_steered, token_labels, layer_idx=19, step=0):
@@ -40,15 +41,18 @@ def plot_attention_diff(attn_base, attn_steered, token_labels, layer_idx=19, ste
     plt.title(f"Attention pattern at layer {layer_idx + 1} at decoding step {step}")
     plt.savefig(f"visualizations/attention_layer_{layer_idx}_step_{step}.png", dpi=300, bbox_inches="tight")
 
-def plot_attention_heads(q_norm_per_head, mean_norm, std_norm, layer_idx, step):
+def plot_attention_heads(norm_per_head, mean_norm, std_norm, layer_idx, step, norm_type="Q-norm"):
     plt.figure(figsize=(8, 5))
-    plt.hist(q_norm_per_head.float().cpu().numpy(), bins=20, alpha=0.7, edgecolor="black")
+    plt.hist(norm_per_head.float().cpu().numpy(), bins=20, alpha=0.7, edgecolor="black")
     plt.axvline(x=mean_norm, color='r', linestyle='--', label=f"Mean: {mean_norm:.0f}")
     plt.axvline(x=mean_norm + std_norm, color="blue", linestyle=":", label=f"+1σ: {mean_norm + std_norm:.0f}")
     plt.axvline(x=mean_norm + 2*std_norm, color="orange", linestyle=":", label=f"+2σ: {mean_norm + 2*std_norm:.0f}")
-    plt.xlabel("Q-norm of steering vector")
+    plt.xlabel(f"{norm_type} of steering vector")
     plt.ylabel("Number of heads")
-    plt.title(f"Distribution of Q-norms of steering vector across attention heads at layer {layer_idx + 1}")
+    plt.title(f"Distribution of {norm_type}s of steering vector across attention heads at layer {layer_idx + 1}")
     plt.legend()
     plt.grid(alpha=0.3)
-    plt.savefig(f"visualizations/attention_head_norms_layer_{layer_idx}_step_{step}.png", dpi=300)
+
+    plt.gca().yaxis.set_major_locator(MaxNLocator(integer=True))
+    
+    plt.savefig(f"visualizations/attention_head_{norm_type}s_layer_{layer_idx}_step_{step}.png", dpi=300)

@@ -7,6 +7,7 @@ from tqdm import tqdm
 import argparse
 import numpy as np
 import matplotlib.pyplot as plt
+import json
 
 from utils import plot_attention_diff, plot_attention_heads
 
@@ -78,6 +79,7 @@ def capture_attn_head_hook(past_kv, strength):
         steering_hidden = (vector * strength).unsqueeze(0).unsqueeze(0).to(torch.bfloat16)
 
         q_steering = F.linear(steering_hidden, module.q_proj.weight, module.q_proj.bias)
+        v_steering = F.linear(steering_hidden, module.v_proj.weight, module.v_proj.bias)
 
         layer_idx = BEST_LAYER
         k_cached = past_kv[layer_idx][0]
@@ -88,20 +90,30 @@ def capture_attn_head_hook(past_kv, strength):
         num_heads = num_kv_heads * module.num_key_value_groups
 
         q_steering = q_steering.view(1, 1, num_heads, head_dim).transpose(1, 2)
+        v_steering = v_steering.view(1, 1, num_kv_heads, head_dim).transpose(1, 2)
 
         q_norm_per_head = q_steering.norm(dim=-1).squeeze()
+        v_norm_per_head = v_steering.norm(dim=-1).squeeze()
 
-        mean_norm = q_norm_per_head.mean().item()
-        std_norm = q_norm_per_head.std().item()
+        mean_q_norm = q_norm_per_head.mean().item()
+        std_q_norm = q_norm_per_head.std().item()
+        mean_v_norm = v_norm_per_head.mean().item()
+        std_v_norm = v_norm_per_head.std().item()
 
-        cv = std_norm / mean_norm
+        q_cv = std_q_norm / mean_q_norm
+        v_cv = std_v_norm / mean_v_norm
 
-        print(f"Mean q-norm for steering vector: {mean_norm:.3f}, std: {std_norm:.3f}")
-        print(f"Coefficient of variation: {cv:.2f}")
-        for head in q_norm_per_head.argsort(descending=True)[:10]:
-            print(f"Head {head}: {q_norm_per_head[head]:.3f}")
+        print(f"Mean q-norm for steering vector: {mean_q_norm:.3f}, std: {std_q_norm:.3f}")
+        print(f"Mean v-norm for steering vector: {mean_v_norm:.3f}, std: {std_v_norm:.3f}")
+        for head in q_norm_per_head.argsort(descending=True)[:5]:
+            print(f"Head {head}: {q_norm_per_head[head]:.3f} (q-norm)")
+        for head in v_norm_per_head.argsort(descending=True)[:5]:
+            head_idx_start = head * module.num_key_value_groups
+            head_idx_end = head_idx_start + module.num_key_value_groups
+            print(f"Head ({head_idx_start}-{head_idx_end}): {v_norm_per_head[head]:.3f} (v-norm)")
 
-        plot_attention_heads(q_norm_per_head, mean_norm, std_norm, BEST_LAYER, visualize_step)
+        plot_attention_heads(q_norm_per_head, mean_q_norm, std_q_norm, BEST_LAYER, visualize_step, "q-norm")
+        plot_attention_heads(v_norm_per_head, mean_v_norm, std_v_norm, BEST_LAYER, visualize_step, "v-norm")
         
     return hook
 
@@ -124,8 +136,8 @@ if method == "layer":
         h.remove()
 
 elif method == "logit":
-    CFG_SCALE = 0.86  # if 1.0, is same as method layer
-    STRENGTH = 2.0
+    CFG_SCALE = 0.88  # if 1.0, is same as method layer
+    STRENGTH = 2.1
     INITIAL_STRENGTH = STRENGTH if decay == "none" else STRENGTH * 2
     FINAL_STRENGTH = STRENGTH if decay == "none" else STRENGTH / 2
 
@@ -210,5 +222,17 @@ elif method == "logit":
     response = tokenizer.decode(generated[0], skip_special_tokens=False)
 
 print(f"Response: {response}")
-with open(f"activations/{model_id.split('/')[-1]}_steered_response_{mode}_layer_{layer}_step_{visualize_step}_method_{method}_decay_{decay}.txt", "w") as f:
-    f.write(response)
+save_path = f"activations/{model_id.split('/')[-1]}_steered_response_{mode}_layer_{layer}_step_{visualize_step}_method_{method}_decay_{decay}.json"
+with open(save_path, "w") as f:
+    f.write(
+        json.dumps(
+            {
+                "response": response,
+                "prompt": prompt,
+                "method": method,
+                "temperature": temperature,
+                "top_p": top_p,
+            }
+        )
+    )
+    print(f"Response saved to {save_path}")
