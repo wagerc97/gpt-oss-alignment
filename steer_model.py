@@ -50,7 +50,6 @@ if mode == "chat":
 
 ids = tokenizer(prompt, return_tensors="pt").input_ids.to(model.device)
 prompt_len = len(ids[0])
-print(f"Input IDs shape: {ids.shape}")
 
 BEST_LAYER = layer
 vector = steering_vectors[BEST_LAYER].squeeze(0).to(model.device) # (hidden,)
@@ -79,6 +78,7 @@ def capture_attn_head_hook(past_kv, strength):
         steering_hidden = (vector * strength).unsqueeze(0).unsqueeze(0).to(torch.bfloat16)
 
         q_steering = F.linear(steering_hidden, module.q_proj.weight, module.q_proj.bias)
+        k_steering = F.linear(steering_hidden, module.k_proj.weight, module.k_proj.bias)
         v_steering = F.linear(steering_hidden, module.v_proj.weight, module.v_proj.bias)
 
         layer_idx = BEST_LAYER
@@ -90,29 +90,34 @@ def capture_attn_head_hook(past_kv, strength):
         num_heads = num_kv_heads * module.num_key_value_groups
 
         q_steering = q_steering.view(1, 1, num_heads, head_dim).transpose(1, 2)
+        k_steering = k_steering.view(1, 1, num_kv_heads, head_dim).transpose(1, 2)
         v_steering = v_steering.view(1, 1, num_kv_heads, head_dim).transpose(1, 2)
 
         q_norm_per_head = q_steering.norm(dim=-1).squeeze()
+        k_norm_per_head = k_steering.norm(dim=-1).squeeze()
         v_norm_per_head = v_steering.norm(dim=-1).squeeze()
 
-        mean_q_norm = q_norm_per_head.mean().item()
-        std_q_norm = q_norm_per_head.std().item()
-        mean_v_norm = v_norm_per_head.mean().item()
-        std_v_norm = v_norm_per_head.std().item()
-
-        q_cv = std_q_norm / mean_q_norm
-        v_cv = std_v_norm / mean_v_norm
+        mean_q_norm, std_q_norm = q_norm_per_head.mean().item(), q_norm_per_head.std().item()
+        mean_k_norm, std_k_norm = k_norm_per_head.mean().item(), k_norm_per_head.std().item()
+        mean_v_norm, std_v_norm = v_norm_per_head.mean().item(), v_norm_per_head.std().item()
 
         print(f"Mean q-norm for steering vector: {mean_q_norm:.3f}, std: {std_q_norm:.3f}")
+        print(f"Mean k-norm for steering vector: {mean_k_norm:.3f}, std: {std_k_norm:.3f}")
         print(f"Mean v-norm for steering vector: {mean_v_norm:.3f}, std: {std_v_norm:.3f}")
-        for head in q_norm_per_head.argsort(descending=True)[:5]:
+        
+        for head in q_norm_per_head.argsort(descending=True)[:module.num_key_value_groups]:
             print(f"Head {head}: {q_norm_per_head[head]:.3f} (q-norm)")
-        for head in v_norm_per_head.argsort(descending=True)[:5]:
+        for head in k_norm_per_head.argsort(descending=True)[:num_kv_heads // 2]:
+            head_idx_start = head * module.num_key_value_groups
+            head_idx_end = head_idx_start + module.num_key_value_groups
+            print(f"Head ({head_idx_start}-{head_idx_end}): {k_norm_per_head[head]:.3f} (k-norm)")
+        for head in v_norm_per_head.argsort(descending=True)[:num_kv_heads // 2]:
             head_idx_start = head * module.num_key_value_groups
             head_idx_end = head_idx_start + module.num_key_value_groups
             print(f"Head ({head_idx_start}-{head_idx_end}): {v_norm_per_head[head]:.3f} (v-norm)")
 
         plot_attention_heads(q_norm_per_head, mean_q_norm, std_q_norm, BEST_LAYER, visualize_step, "q-norm")
+        plot_attention_heads(k_norm_per_head, mean_k_norm, std_k_norm, BEST_LAYER, visualize_step, "k-norm")
         plot_attention_heads(v_norm_per_head, mean_v_norm, std_v_norm, BEST_LAYER, visualize_step, "v-norm")
         
     return hook
@@ -221,7 +226,7 @@ elif method == "logit":
 
     response = tokenizer.decode(generated[0], skip_special_tokens=False)
 
-print(f"Response: {response}")
+print(f"Response: {response[len(prompt):len(prompt) + 100]}...{response[-100:]}")
 save_path = f"activations/{model_id.split('/')[-1]}_steered_response_{mode}_layer_{layer}_step_{visualize_step}_method_{method}_decay_{decay}.json"
 with open(save_path, "w") as f:
     f.write(
