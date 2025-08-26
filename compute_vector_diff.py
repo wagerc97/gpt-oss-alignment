@@ -12,7 +12,7 @@ args = parser.parse_args()
 
 target = args.target
 
-activation_dir = "/local-ssd/mh3897/activations"
+activation_dir = "./activations"
 pos_tensors = defaultdict(list)
 neg_tensors = defaultdict(list)
 
