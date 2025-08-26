@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import os
 from collections import defaultdict
 
-activation_dir = "/local-ssd/mh3897/activations"
+activation_dir = "./activations"
 pos_prompt_tensors = defaultdict(list)
 neg_prompt_tensors = defaultdict(list)
 
