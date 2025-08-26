@@ -52,7 +52,7 @@ ids = tokenizer(prompt, return_tensors="pt").input_ids.to(model.device)
 prompt_len = len(ids[0])
 
 BEST_LAYER = layer
-vector = steering_vectors[BEST_LAYER].squeeze(0).to(model.device) # (hidden,)
+vector = steering_vectors[BEST_LAYER].to(model.device) # (hidden,)
 layers = model.model.layers
 
 attn_patterns_base = []
