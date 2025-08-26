@@ -27,7 +27,7 @@ model = AutoModelForCausalLM.from_pretrained(
 )
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 
-steering_vectors = torch.load("activations/prompt_diff.pt") # (n_layers, hidden)
+steering_vectors = torch.load("activations/diff_vectors.pt") # (n_layers, hidden)
 steering_vectors = steering_vectors.to(model.device).to(torch.bfloat16) # (n_layers, hidden)
 print(f"Steering vectors shape: {steering_vectors.shape}")
 
