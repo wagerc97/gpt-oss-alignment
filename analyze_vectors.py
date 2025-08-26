@@ -34,7 +34,7 @@ print(f"Steering vectors shape: {steering_vectors.shape}")
 hidden_steering_vectors = steering_vectors[1:, :] # discard embedding layer
 chosen_steering_vectors = hidden_steering_vectors[layer_idx_start:, :]
 
-logit_head = model.lm_head
+logit_head = model.lm_head # use lm head, not embedding
 logits = logit_head(chosen_steering_vectors)
 
 top_k_logits, top_k_indices = torch.topk(logits, k=top_k, dim=-1)

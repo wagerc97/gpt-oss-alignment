@@ -49,14 +49,13 @@ for l in range(num_layers):
     pos_mean = pos_layer.mean(dim=1) # (n_categories, hidden)
     neg_mean = neg_layer.mean(dim=1)
 
-    pos_layer_norm = F.normalize(pos_mean, dim=-1)
-    neg_layer_norm = F.normalize(neg_mean, dim=-1)
+    diff_mean = neg_mean - pos_mean # category wise diff
 
-    pos_mean_norm = pos_layer_norm.mean(dim=0) # (hidden,)
-    neg_mean_norm = neg_layer_norm.mean(dim=0)
+    diff_layer_norm = F.normalize(diff_mean, dim=-1)
 
-    layer_diff = neg_mean_norm - pos_mean_norm
-    diff_vectors.append(layer_diff)
+    diff_vector = diff_layer_norm.mean(dim=0) # (hidden,)
+
+    diff_vectors.append(diff_vector)
 
 diff_vectors = torch.stack(diff_vectors, dim=0) # (n_layer, hidden)
 print(f"Diff vector shape: {diff_vectors.shape}")
