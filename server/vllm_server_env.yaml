@@ -1,0 +1,10 @@
+name: vllm_aug2025
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - libstdcxx-ng
+  - pip:
+      - vllm==0.10.1+gptoss
+      - openai
