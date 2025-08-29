@@ -4,4 +4,4 @@ python -u \
 	--port 8010 \
 	--model openai/gpt-oss-20b \
 	--served-model-name code-gen \
-	--tensor-parallel-size 8
+	--tensor-parallel-size 2
