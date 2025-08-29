@@ -8,5 +8,3 @@ nohup python -u                       `#run in background, ignore hangup` \
 	--max-model-len 128000            `#context length taken from model card` \
 	--idle-timeout 7200               `#close after 2 hours of inactivity (computed 2h * 3600s/h)` \ 
 	> ~/vllm_gptoss.log 2>&1 &        `#log output to file` 
-
-
