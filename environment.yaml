@@ -1,0 +1,14 @@
+# usage: micromamba create -f environment.yaml -y
+name: gpt-alignment
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - jupyter
+  - ipykernel
+  - pip
+  - pip:
+      - openai>=1.0.0
+      - transformers>=4.40.0
+      - accelerate
+      - torch  # required by transformers
