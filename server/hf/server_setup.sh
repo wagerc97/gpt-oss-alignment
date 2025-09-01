@@ -34,5 +34,5 @@ uv pip install openai --upgrade
 # 3. Download Model (GPT-OSS 20B)
 # -------------------------------
 # (Optional, if you want to pre-download)
-huggingface-cli login    # If model is gated
-huggingface-cli download openai/gpt-oss-20b --local-dir ./gpt-oss-20b
+hf auth login    # If model is gated
+hf download openai/gpt-oss-20b --local-dir ./gpt-oss-20b

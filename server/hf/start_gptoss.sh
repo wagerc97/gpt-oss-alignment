@@ -5,6 +5,7 @@ export MAMBA_ROOT_PREFIX='/home/wager/micromamba';
 eval "$(/home/wager/micromamba/bin/micromamba shell hook --shell bash)"
 micromamba activate tgi_aug2025
 echo "--> using Python: $(which python)"
+echo "--> using text-generation: $(pip show text-generation)"
 
 # Launch TGI server
 nohup text-generation-launcher \
