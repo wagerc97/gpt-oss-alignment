@@ -5,3 +5,6 @@ __pycache__
 kaggle/
 activations/
 visualizations/
+
+# ignore LLM
+gpt-oss-20b/
