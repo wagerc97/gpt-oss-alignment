@@ -1,3 +1,4 @@
+# server_setup.sh
 # Setup script for server environment
 
 export MAMBA_EXE='/home/wager/micromamba/bin/micromamba';
