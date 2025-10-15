@@ -1,15 +1,6 @@
 # server_setup.sh
 # Setup server environment
 
-# Check that micromamba is installed
-if ! command -v micromamba &> /dev/null
-then
-    echo "micromamba could not be found, please install it first."
-    echo "Install with the following commands:"
-    echo "curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba" 
-    exit
-fi
-
 # Load micromamba
 export MAMBA_EXE='/home/wager/micromamba/bin/micromamba';
 export MAMBA_ROOT_PREFIX='/home/wager/micromamba';
