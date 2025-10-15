@@ -1,0 +1,9 @@
+# install_micromamba.sh 
+
+# install on Linux Intel (x86_64):
+curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba
+# check binary works
+bin/micromamba --version 
+# move the binary to the 
+mkdir -p micromamba/bin 
+mv bin/micromamba micromamba/bin
