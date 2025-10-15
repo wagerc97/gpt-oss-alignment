@@ -21,7 +21,6 @@ micromamba deactivate
 micromamba create -n vllm_oct25 python=3.12.0 -y
 micromamba activate vllm_oct25
 micromamba env list
-#export VLLM_USE_V1=0
 
 # Install vLLM and dependencies
 micromamba install -c conda-forge libstdcxx-ng -y
