@@ -18,7 +18,7 @@ echo "Micromamba version: $(micromamba --version)"
 
 # Create and activate vllm_oct25 environment
 micromamba deactivate
-micromamba create -n vllm_oct25 python=3.12.0 -y
+micromamba create -n vllm_oct25 python=3.12 -y
 micromamba activate vllm_oct25
 micromamba env list
 
