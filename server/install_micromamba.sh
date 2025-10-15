@@ -6,8 +6,8 @@ curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/mi
 mkdir -p micromamba/bin 
 mv bin/micromamba micromamba/bin
 # move micromamba to PATH
-export PATH="/home/$USER/micromamba/bin:$PATH"
-echo 'export PATH="/home/$USER/micromamba/bin:$PATH"' >> ~/.bashrc
+export PATH="$HOME/micromamba/bin:$PATH"
+echo 'export PATH="$HOME/micromamba/bin:$PATH"' >> ~/.bashrc
 # test micromamba
 echo "Micromamba version: $(micromamba --version)"
 # Initialize micromamba for bash

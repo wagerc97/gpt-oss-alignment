@@ -2,18 +2,18 @@
 # Setup server environment
 
 # If micromamba is not installed, run the install script
-if [ ! -d "/home/$USER/micromamba" ]; then
+if [ ! -d "$HOME/micromamba" ]; then
     echo "Installing micromamba..."
-    bash /home/$USER/server/install_micromamba.sh
+    bash $HOME/server/install_micromamba.sh
     echo "Micromamba installed."
 else
     echo "Micromamba already installed."
 fi
 
 # Load micromamba
-export MAMBA_EXE='/home/$USER/micromamba/bin/micromamba';
-export MAMBA_ROOT_PREFIX='/home/$USER/micromamba';
-eval "$(/home/$USER/micromamba/bin/micromamba shell hook --shell bash)"
+export MAMBA_EXE='$HOME/micromamba/bin/micromamba';
+export MAMBA_ROOT_PREFIX='$HOME/micromamba';
+eval "$($HOME/micromamba/bin/micromamba shell hook --shell bash)"
 echo "Micromamba version: $(micromamba --version)"
 
 # Create and activate vllm_oct25 environment

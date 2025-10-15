@@ -2,9 +2,9 @@
 # Start the vLLM server for GPT-OSS-20B model
 
 # Load micromamba
-export MAMBA_EXE='/home/$USER/micromamba/bin/micromamba';
-export MAMBA_ROOT_PREFIX='/home/$USER/micromamba';
-eval "$(/home/$USER/micromamba/bin/micromamba shell hook --shell bash)"
+export MAMBA_EXE='$HOME/micromamba/bin/micromamba';
+export MAMBA_ROOT_PREFIX='$HOME/micromamba';
+eval "$($HOME/micromamba/bin/micromamba shell hook --shell bash)"
 micromamba --version
 micromamba activate vllm_oct25
 micromamba env list
