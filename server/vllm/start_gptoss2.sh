@@ -6,7 +6,6 @@ export MAMBA_EXE='/home/wager/micromamba/bin/micromamba';
 export MAMBA_ROOT_PREFIX='/home/wager/micromamba';
 eval "$(/home/wager/micromamba/bin/micromamba shell hook --shell bash)"
 micromamba --version
-micromamba env list
 micromamba activate vllm_oct25
 micromamba env list
 echo "--> using Python: $(which python)"
