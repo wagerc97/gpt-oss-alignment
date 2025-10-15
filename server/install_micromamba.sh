@@ -12,3 +12,11 @@ export PATH="/home/$USER/micromamba/bin:$PATH"
 echo 'export PATH="/home/$USER/micromamba/bin:$PATH"' >> ~/.bashrc
 # test micromamba
 micromamba --version
+# Initialize micromamba for bash
+micromamba shell init --shell bash --root-prefix=~/micromamba
+source ~/.bashrc
+# test micromamba again
+micromamba activate base 
+micromamba deactivate
+micromamba env list 
+echo "Micromamba installation complete."
