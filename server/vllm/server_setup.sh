@@ -7,7 +7,6 @@ then
     echo "micromamba could not be found, please install it first."
     echo "Install with the following commands:"
     echo "curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba" 
-
     exit
 fi
 

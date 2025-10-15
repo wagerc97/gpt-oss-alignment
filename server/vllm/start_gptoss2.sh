@@ -15,8 +15,8 @@ echo "--> using Python: $(which python)"
 export VLLM_USE_V1=0
 
 # Start the vLLM server with nohup
-nohup python -u \ 
-	-m vllm.entrypoints.openai.api_server \
+echo "Starting vLLM server for GPT-OSS-20B model..."
+nohup python -u -m vllm.entrypoints.openai.api_server \
 	--host 0.0.0.0 \
 	--port 8010 \
 	--model openai/gpt-oss-20b \
@@ -24,3 +24,6 @@ nohup python -u \
 	--tensor-parallel-size 2 \
 	--max-model-len 128000 \
 	> vllm_gptoss.log 2>&1 &
+
+echo "Bye! The server is running in the background."
+echo "Check vllm_gptoss.log for logs."
