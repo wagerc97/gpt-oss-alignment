@@ -14,7 +14,7 @@ fi
 export MAMBA_EXE='/home/$USER/micromamba/bin/micromamba';
 export MAMBA_ROOT_PREFIX='/home/$USER/micromamba';
 eval "$(/home/$USER/micromamba/bin/micromamba shell hook --shell bash)"
-micromamba --version
+echo "Micromamba version: $(micromamba --version)"
 
 # Create and activate vllm_oct25 environment
 micromamba deactivate
