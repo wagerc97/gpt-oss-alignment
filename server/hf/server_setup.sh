@@ -5,9 +5,9 @@
 # https://github.com/huggingface/text-generation-inference
 
 # Setup micromamba environment
-export MAMBA_EXE='/home/wager/micromamba/bin/micromamba'
-export MAMBA_ROOT_PREFIX='/home/wager/micromamba'
-eval "$(/home/wager/micromamba/bin/micromamba shell hook --shell bash)"
+export MAMBA_EXE='/home/$USER/micromamba/bin/micromamba'
+export MAMBA_ROOT_PREFIX='/home/$USER/micromamba'
+eval "$(/home/$USER/micromamba/bin/micromamba shell hook --shell bash)"
 micromamba --version
 
 # Create and activate environment

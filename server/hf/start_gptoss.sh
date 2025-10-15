@@ -1,8 +1,8 @@
 # start_gptoss.sh 
 
-export MAMBA_EXE='/home/wager/micromamba/bin/micromamba';
-export MAMBA_ROOT_PREFIX='/home/wager/micromamba';
-eval "$(/home/wager/micromamba/bin/micromamba shell hook --shell bash)"
+export MAMBA_EXE='/home/$USER/micromamba/bin/micromamba';
+export MAMBA_ROOT_PREFIX='/home/$USER/micromamba';
+eval "$(/home/$USER/micromamba/bin/micromamba shell hook --shell bash)"
 micromamba activate tgi_aug2025
 micromamba env list
 echo "--> using Python: $(which python)"
