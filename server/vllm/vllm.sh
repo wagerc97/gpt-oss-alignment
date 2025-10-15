@@ -1,3 +1,6 @@
+# vllm.sh
+
+# Run the vLLM server with a specific model and configuration.
 python -u \
 	-m vllm.entrypoints.openai.api_server \
 	--host 0.0.0.0 \
