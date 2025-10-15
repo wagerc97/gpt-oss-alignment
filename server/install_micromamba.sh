@@ -7,3 +7,8 @@ bin/micromamba --version
 # move the binary to the 
 mkdir -p micromamba/bin 
 mv bin/micromamba micromamba/bin
+# move micromamba to PATH
+export PATH="/home/$USER/micromamba/bin:$PATH"
+echo 'export PATH="/home/$USER/micromamba/bin:$PATH"' >> ~/.bashrc
+# test micromamba
+micromamba --version
