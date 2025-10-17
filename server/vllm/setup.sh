@@ -35,11 +35,22 @@ pip install --pre torch==2.9.0.dev20250819+cu128 \
 # check torch and cuda versions
 python -c "import torch; print(torch.__version__, torch.version.cuda)"
 
+# NumPy for PyTorch
+pip install numpy
+
 # Install vLLM with GPT-OSS support
 uv pip install --pre vllm==0.10.1+gptoss \
     --extra-index-url https://wheels.vllm.ai/gpt-oss/ \
     --index-strategy unsafe-best-match \
     --no-deps
+
+# Prometheus client for vLLM API server
+pip install prometheus_client
+# Optional: other recommended packages for vLLM
+pip install sentencepiece triton
+
+# Verify imports
+python -c "import torch, numpy, vllm, prometheus_client; print('All imports OK')"
 
 # Install other dependencies
 uv pip install openai --upgrade
