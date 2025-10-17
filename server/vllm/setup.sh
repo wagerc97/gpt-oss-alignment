@@ -27,11 +27,22 @@ micromamba install -c conda-forge libstdcxx-ng -y
 # Upgrade uv (already installed, but let"s ensure it"s the latest)
 pip install uv 
 
+# Install PyTorch nightly with CUDA 12.8 support
+# (The version suggested by huggingface is not available on the index anymore)
+pip install https://download.pytorch.org/whl/nightly/cu128/torch-2.9.0.dev20250819+cu128-cp312-cp312-manylinux_2_28_x86_64.whl
+
+# check torch and cuda versions
+python -c "import torch; print(torch.__version__, torch.version.cuda)"
+
 # Install vLLM with GPT-OSS support
 uv pip install --pre vllm==0.10.1+gptoss \
     --extra-index-url https://wheels.vllm.ai/gpt-oss/ \
-    --extra-index-url https://download.pytorch.org/whl/nightly/cu128 \
-    --index-strategy unsafe-best-match
+    --index-strategy unsafe-best-match \
+    --no-deps
 
 # Install other dependencies
 uv pip install openai --upgrade
+
+# Verify installations
+python -c "import torch, vllm; print(torch.__version__, vllm.__version__)"
+echo "vLLM setup completed."
