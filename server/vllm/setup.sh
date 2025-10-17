@@ -22,7 +22,7 @@ echo "Micromamba version: $(micromamba --version)"
 
 # Create and activate vllm environment with Python 3.11
 micromamba deactivate || true
-micromamba create -n vllm_oct25 python=3.11 -y
+micromamba create -n vllm_oct25 python=3.10 -y
 micromamba activate vllm_oct25
 micromamba env list
 echo "--> Using Python: $(which python)"
