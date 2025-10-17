@@ -77,3 +77,7 @@ uv pip install --upgrade openai
 python -c "import torch, numpy, vllm, prometheus_client, regex; print('All critical imports OK')"
 
 echo "vLLM GPT-OSS-20B setup completed."
+
+# Export environment to file with timestamp for reproducibility
+ts=$(date +%Y%m%d_%H%M%S)
+micromamba env export -n vllm_oct25 --no-builds > ~/vllm_oct25_env_export_$ts.yaml
