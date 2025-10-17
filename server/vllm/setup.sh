@@ -81,3 +81,4 @@ echo "vLLM GPT-OSS-20B setup completed."
 # Export environment to file with timestamp for reproducibility
 ts=$(date +%Y%m%d_%H%M%S)
 micromamba env export -n vllm_oct25 --no-builds > ~/vllm_oct25_env_export_$ts.yaml
+echo "Exported vllm_oct25 environment to ~/vllm_oct25_env_export_$ts.yaml"
