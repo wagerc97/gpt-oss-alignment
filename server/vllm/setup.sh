@@ -30,9 +30,6 @@ echo "--> Using Python: $(which python)"
 # Ensure libstdcxx is installed for PyTorch
 micromamba install -c conda-forge libstdcxx-ng -y
 
-# Upgrade uv (optional)
-pip install --upgrade uv
-
 # Install exact PyTorch nightly + CUDA 12.8 build (must match vLLM's pinned version)
 pip install --pre torch==2.9.0.dev20250819+cu128 \
     --extra-index-url https://download.pytorch.org/whl/nightly/cu128
@@ -41,13 +38,13 @@ pip install --pre torch==2.9.0.dev20250819+cu128 \
 python -c "import torch; print('Torch version:', torch.__version__, 'CUDA:', torch.version.cuda)"
 
 # Install vLLM GPT-OSS wheel (no deps)
-uv pip install --pre vllm==0.10.1+gptoss \
+pip install --pre vllm==0.10.1+gptoss \
     --extra-index-url https://wheels.vllm.ai/gpt-oss/ \
     --index-strategy unsafe-best-match \
     --no-deps
 
 # Install all pinned dependencies required by vLLM+GPT-OSS
-uv pip install \
+pip install \
     numpy==2.3.4 prometheus_client sentencepiece triton==3.4.0 \
     aiohttp blake3 cachetools cbor2 cloudpickle \
     compressed-tensors==0.10.2 depyf==0.19.0 diskcache==5.6.3 \
@@ -66,7 +63,7 @@ uv pip install \
     triton_kernels==1.0.0 watchfiles xgrammar==0.1.21
 
 # Upgrade OpenAI client
-uv pip install --upgrade openai
+pip install --upgrade openai
 
 echo "vLLM GPT-OSS-20B setup completed."
 
