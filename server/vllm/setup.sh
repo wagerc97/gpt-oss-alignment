@@ -41,7 +41,6 @@ python -c "import torch; print('Torch version:', torch.__version__, 'CUDA:', tor
 # Install vLLM GPT-OSS wheel (no deps)
 pip install --pre vllm==0.10.1+gptoss \
     --extra-index-url https://wheels.vllm.ai/gpt-oss/ \
-    --index-strategy unsafe-best-match \
     --no-deps
 
 # Install all pinned dependencies required by vLLM+GPT-OSS
