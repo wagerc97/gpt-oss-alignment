@@ -44,8 +44,7 @@ pip install --pre vllm==0.10.1+gptoss \
     --no-deps
 
 # Install all pinned dependencies required by vLLM+GPT-OSS
-pip install \
-    prometheus_client sentencepiece triton==3.4.0 \
+pip install prometheus_client sentencepiece triton==3.4.0 \
     aiohttp blake3 cachetools cbor2 cloudpickle \
     compressed-tensors==0.10.2 depyf==0.19.0 diskcache==5.6.3 \
     einops "fastapi[standard]>=0.115.0" flashinfer_python==0.2.8 \
@@ -60,10 +59,8 @@ pip install \
     six>=1.16.0 tiktoken>=0.6.0 tokenizers>=0.21.1 \
     torchaudio==2.8.0.dev20250804+cu128 \
     torchvision==0.24.0.dev20250804+cu128 tqdm transformers>=4.53.2 \
-    triton_kernels==1.0.0 watchfiles xgrammar==0.1.21
-
-# Upgrade OpenAI client
-pip install --upgrade openai
+    triton_kernels==1.0.0 watchfiles xgrammar==0.1.21 \
+    openai
 
 echo "vLLM GPT-OSS-20B setup completed."
 
