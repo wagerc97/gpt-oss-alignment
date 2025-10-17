@@ -29,7 +29,8 @@ pip install uv
 
 # Install PyTorch nightly with CUDA 12.8 support
 # (The version suggested by huggingface is not available on the index anymore)
-pip install https://download.pytorch.org/whl/nightly/cu128/torch-2.9.0.dev20250819+cu128-cp312-cp312-manylinux_2_28_x86_64.whl
+pip install --pre torch==2.9.0.dev20250819+cu128 \
+  --extra-index-url https://download.pytorch.org/whl/nightly/cu128
 
 # check torch and cuda versions
 python -c "import torch; print(torch.__version__, torch.version.cuda)"
