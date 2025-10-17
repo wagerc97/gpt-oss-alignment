@@ -31,7 +31,7 @@ echo "--> Using Python: $(which python)"
 micromamba install -c conda-forge libstdcxx-ng -y
 
 # Install exact PyTorch nightly + CUDA 12.8 build (must match vLLM's pinned version)
-pip install numpy==2.3.4 
+pip install numpy==1.26.4
 pip install --pre torch==2.9.0.dev20250819+cu128 \
     --extra-index-url https://download.pytorch.org/whl/nightly/cu128
 
