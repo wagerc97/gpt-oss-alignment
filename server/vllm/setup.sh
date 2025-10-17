@@ -31,6 +31,7 @@ echo "--> Using Python: $(which python)"
 micromamba install -c conda-forge libstdcxx-ng -y
 
 # Install exact PyTorch nightly + CUDA 12.8 build (must match vLLM's pinned version)
+pip install numpy==2.3.4 
 pip install --pre torch==2.9.0.dev20250819+cu128 \
     --extra-index-url https://download.pytorch.org/whl/nightly/cu128
 
@@ -45,7 +46,7 @@ pip install --pre vllm==0.10.1+gptoss \
 
 # Install all pinned dependencies required by vLLM+GPT-OSS
 pip install \
-    numpy==2.3.4 prometheus_client sentencepiece triton==3.4.0 \
+    prometheus_client sentencepiece triton==3.4.0 \
     aiohttp blake3 cachetools cbor2 cloudpickle \
     compressed-tensors==0.10.2 depyf==0.19.0 diskcache==5.6.3 \
     einops "fastapi[standard]>=0.115.0" flashinfer_python==0.2.8 \
