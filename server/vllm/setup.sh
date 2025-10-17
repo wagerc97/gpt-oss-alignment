@@ -34,7 +34,7 @@ micromamba install -c conda-forge libstdcxx-ng -y
 pip install --upgrade uv
 
 # Install exact PyTorch nightly + CUDA 12.8 build (must match vLLM's pinned version)
-pip install --pre torch==2.9.0.dev202508+cu128 \
+pip install --pre torch==2.9.0.dev20250819+cu128 \
     --extra-index-url https://download.pytorch.org/whl/nightly/cu128
 
 # Verify Torch + CUDA
